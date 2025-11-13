@@ -431,6 +431,14 @@
           }
           refreshAllStickers();
         }, { passive: true });
+
+        // Also listen for wheel event for better compatibility
+        window.addEventListener('wheel', (event) => {
+          if (isRefreshing) {
+            return; // Don't refresh if already refreshing
+          }
+          refreshAllStickers();
+        }, { passive: true });
         // --- END OF NEW LOGIC ---
       });
     </script>
