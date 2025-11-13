@@ -266,7 +266,7 @@
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      window.addEventListener('load', () => {
         const stickerGrid = document.getElementById('sticker-grid');
 
         const stickerImageFiles = [
@@ -335,24 +335,26 @@
 
           stickerWrapper.appendChild(sticker);
 
-          // GSAP hover animation
-          stickerWrapper.addEventListener('mouseenter', () => {
-            gsap.to(stickerWrapper, { zIndex: 5, duration: 0 });
-            gsap.to(sticker, {
-              scale: 1.2,
-              duration: 0.4,
-              ease: 'elastic.out(1, 0.5)',
+        // GSAP hover animation
+          if (typeof gsap !== 'undefined') {
+            stickerWrapper.addEventListener('mouseenter', () => {
+              gsap.to(stickerWrapper, { zIndex: 5, duration: 0 });
+              gsap.to(sticker, {
+                scale: 1.2,
+                duration: 0.4,
+                ease: 'elastic.out(1, 0.5)',
+              });
             });
-          });
 
-          stickerWrapper.addEventListener('mouseleave', () => {
-            gsap.to(sticker, {
-              scale: 1,
-              duration: 0.4,
-              ease: 'elastic.out(1, 0.5)',
+            stickerWrapper.addEventListener('mouseleave', () => {
+              gsap.to(sticker, {
+                scale: 1,
+                duration: 0.4,
+                ease: 'elastic.out(1, 0.5)',
+              });
+              gsap.to(stickerWrapper, { zIndex: 0, duration: 0, delay: 0.4 });
             });
-            gsap.to(stickerWrapper, { zIndex: 0, duration: 0, delay: 0.4 });
-          });
+          }
 
           return stickerWrapper;
         }
@@ -366,18 +368,20 @@
         }
 
         // Animate all stickers in on load
-        document.querySelectorAll('.sticker-wrapper').forEach((sticker) => {
-          // Set initial state
-          gsap.set(sticker, { opacity: 0, scale: 0.8 });
-          // Animate in
-          gsap.to(sticker, {
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'elastic.out(1, 0.5)',
-            delay: Math.random() * 0.5,
+        if (typeof gsap !== 'undefined') {
+          document.querySelectorAll('.sticker-wrapper').forEach((sticker) => {
+            // Set initial state
+            gsap.set(sticker, { opacity: 0, scale: 0.8 });
+            // Animate in
+            gsap.to(sticker, {
+              scale: 1,
+              opacity: 1,
+              duration: 0.8,
+              ease: 'elastic.out(1, 0.5)',
+              delay: Math.random() * 0.5,
+            });
           });
-        });
+        }
 
         // --- NEW LOGIC: Refresh on Scroll Wheel ---
         let isRefreshing = false;
@@ -397,18 +401,20 @@
             img.src = stickerImageFiles[randomIndex]; // Change image path
 
             // 2. Re-run the bubble animation from a hidden state
-            gsap.fromTo(
-              stickerWrapper,
-              { opacity: 0, scale: 0.8 }, // From this state
-              {
-                // To this state
-                opacity: 1,
-                scale: 1,
-                duration: 0.8,
-                ease: 'elastic.out(1, 0.5)',
-                delay: Math.random() * 0.5, // Stagger the refresh
-              }
-            );
+            if (typeof gsap !== 'undefined') {
+              gsap.fromTo(
+                stickerWrapper,
+                { opacity: 0, scale: 0.8 }, // From this state
+                {
+                  // To this state
+                  opacity: 1,
+                  scale: 1,
+                  duration: 0.8,
+                  ease: 'elastic.out(1, 0.5)',
+                  delay: Math.random() * 0.5, // Stagger the refresh
+                }
+              );
+            }
           });
 
           // PERUBAHAN: Jeda diperpanjang untuk fix bug "refresh 2x"
@@ -417,19 +423,8 @@
           }, 1500); // Diubah dari 1000ms ke 1500ms
         }
 
-        // PERUBAHAN: Listener 'wheel' diganti dengan 'click'
-        const refreshButton = document.getElementById('refresh-button');
-        if (refreshButton) {
-          refreshButton.addEventListener('click', () => {
-            if (isRefreshing) {
-              return; // Don't refresh if already refreshing
-            }
-            refreshAllStickers();
-          });
-        }
-
         // Listener for scroll to refresh
-        window.addEventListener('wheel', (event) => {
+        window.addEventListener('scroll', (event) => {
           if (isRefreshing) {
             return; // Don't refresh if already refreshing
           }

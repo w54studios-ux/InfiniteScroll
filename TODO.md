@@ -1,0 +1,4 @@
+- [x] Change 'wheel' event to 'scroll' for better compatibility
+- [x] Add GSAP check to prevent errors if not loaded
+- [x] Change to 'load' event to ensure resources are loaded
+- [x] Remove unused refresh button code
